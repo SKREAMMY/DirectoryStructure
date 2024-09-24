@@ -8,19 +8,21 @@ import { useState } from 'react';
 
 function App() {
 
-  const traverseTree = useTraverseFolder();
+  const { insert } = useTraverseFolder();
   const [explorerData, setExplorerData] = useState(explorer);
 
-  const newExplorerDataFunction = (data) => {
-    setExplorerData(data);
-    console.log("working", data);
+
+  const newExplorerDataFunction = (name, explorerid, isFolder) => {
+    console.log(name, " - ", explorerid, " - ", isFolder);
+    const result = insert(name, explorerData, explorerid, isFolder);
+    console.log(result);
   }
 
 
   return (
     <div className="App">
 
-      <FolderComponent traverseTree={traverseTree} explorer={explorerData} change={newExplorerDataFunction} />
+      <FolderComponent explorer={explorerData} addNewFolder={newExplorerDataFunction} />
 
     </div>
   );

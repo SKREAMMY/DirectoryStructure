@@ -1,11 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./folder.css";
 import useTraverseFolder from "../hooks/useTraverseFolder";
 
-const FolderComponent = ({ explorer, change }) => {
+const FolderComponent = ({ explorer, addNewFolder = () => {} }) => {
   const { insert } = useTraverseFolder();
-  console.log("rerender");
-
+  //   console.log("rerender");
+  const [count, setCount] = useState(0);
   const [visibility, setVisibility] = useState({
     visible: false,
     isFolder: false,
@@ -14,28 +14,40 @@ const FolderComponent = ({ explorer, change }) => {
 
   const input = useRef("");
 
+  useEffect(() => {
+    // count state is to check how many rerender occurs
+    console.log("re rendered", count);
+  }, [count]);
+
   const handleVisibility = (e) => {
     if (visibility.visible === false) {
       setVisibility({ ...visibility, visible: true, showInput: false });
+      setCount(count + 1);
     } else {
       setVisibility({ ...visibility, visible: false, showInput: false });
+      setCount(count + 1);
     }
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      change(insert(input.current, explorer, explorer.id));
+      console.log("explorer data before sending ", visibility.isFolder);
+
+      addNewFolder(input.current, explorer.id, visibility.isFolder);
+      e.stopPropagation();
       input.current = "";
+
       e.stopPropagation();
       setVisibility({ ...visibility, showInput: false });
+      setCount(count + 1);
     }
   };
 
   const handleBlur = () => {
     input.current = "";
-    console.log("blurred");
     console.log(input.current);
     setVisibility({ ...visibility, showInput: false });
+    setCount(count + 1);
   };
   return (
     <div>
@@ -64,7 +76,19 @@ const FolderComponent = ({ explorer, change }) => {
             >
               + folder
             </button>
-            <button className="addFileButton">+ file</button>
+            <button
+              className="addFileButton"
+              onClick={() => {
+                setVisibility({
+                  ...visibility,
+                  visible: true,
+                  isFolder: false,
+                  showInput: true,
+                });
+              }}
+            >
+              + file
+            </button>
           </div>
         )}
       </div>
@@ -91,7 +115,7 @@ const FolderComponent = ({ explorer, change }) => {
           {explorer.isFolder && (
             <div style={{ marginLeft: "20px" }}>
               {explorer.items.map((item) => (
-                <FolderComponent explorer={item} key={item.id} />
+                <FolderComponent explorer={item} addNewFolder={addNewFolder} />
               ))}
             </div>
           )}

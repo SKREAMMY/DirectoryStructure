@@ -1,0 +1,16 @@
+.container {
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.addFolderButton {
+    margin-left: 20px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.addFileButton {
+    border-radius: 3px;
+    margin-left: 5px;
+    cursor: pointer;
+}
